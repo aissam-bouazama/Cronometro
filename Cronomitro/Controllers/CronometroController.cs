@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using Cronometro;
+using Cronometro.Data;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -9,63 +10,38 @@ namespace Cronomitro.Controllers
     [Route("[controller]")]
     public class CronometroController : Controller
     {
-        private Dictionary<string, Crono> _cronometros;
+        private readonly  RepositoryCronometros _repo = new RepositoryCronometros();
+
+
+        
 
         [HttpGet("LlistaCrono")]
         public ActionResult List()
         {
-            if (_cronometros == null)
+            var Cronos = _repo.Getall();
+            if ( Cronos== null)
             {
                 return NotFound("no hi ha Cap Llista");
             }
             else
             {
-                return Ok(_cronometros.Keys.ToArray());
+                return Ok(Cronos);
             }
+
 
         }
-
-        [HttpPost("AfegirCrono")]
-        public ActionResult Start()
-        {
-            if (_cronometros == null)
-            {
-                _cronometros = new Dictionary<string, Crono>();
-            }
-                string id = Guid.NewGuid().ToString();
+        [HttpGet("Crono")]
+        public ActionResult Get(string id) {
             if (string.IsNullOrEmpty(id))
             {
-                return BadRequest("El id no pot ser null o buit");
+                return BadRequest("El id no pot ser buit");
             }
             else
             {
-                if (_cronometros.ContainsKey(id))
+                double temps = _repo.Get(id);
+                if (temps != -1)
                 {
-                    return BadRequest("El id ja existeix");
-                }
-                else
-                {
-                    Crono crono = new Crono(id, DateTime.Now, StatusCronometro.Started);
-                    _cronometros.Add(id, crono);
-                    return Ok(_cronometros);
-
-                }
-            }
-        }
-        [HttpDelete("AturaCrono")]
-        public ActionResult Stop(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                return BadRequest("El id no pot ser null o buit");
-            }
-            else
-            {
-                if (_cronometros.ContainsKey(id))
-                {
-                    var crono = _cronometros.FirstOrDefault(x => x.Key == id).Value;
-                    _cronometros.Remove(id);
-                    return Ok(crono.TempsAcumulat);
+                    return Ok(temps);
                 }
                 else
                 {
@@ -73,7 +49,44 @@ namespace Cronomitro.Controllers
                 }
             }
         }
-        [HttpPost("PausaCrono")]
+
+        [HttpPost("AfegirCrono")]
+        public ActionResult Start()
+        {
+
+            string id = _repo.Start();
+
+             if (id != null)
+            {
+                return Ok(id);
+            }
+            else
+            {
+                return BadRequest("No s'ha pogut afegir el crono");
+            }
+        }
+        [HttpDelete("AturaCrono")]
+        public ActionResult Stop(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("El id no pot ser buit");
+            }
+            else
+            {
+                 double temps = _repo.Stop(id);
+                if (temps != -1)
+                {
+                    return Ok(temps);
+                }
+                else
+                {
+                    return NotFound("El id no existeix");
+                }
+               
+            }
+        }
+        [HttpPut("PausaCrono")]
         public ActionResult Pause(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -82,13 +95,10 @@ namespace Cronomitro.Controllers
             }
             else
             {
-                if (_cronometros.ContainsKey(id))
+               double temps = _repo.Pause(id);
+                if (temps != -1)
                 {
-                    var crono = _cronometros.FirstOrDefault(x => x.Key == id).Value;
-                    crono.TempsAcumulat = (DateTime.Now - crono.TempsInici).TotalHours;
-                    crono.Status = StatusCronometro.Paused;
-
-                    return Ok(crono);
+                    return Ok(temps);
                 }
                 else
                 {
@@ -99,7 +109,7 @@ namespace Cronomitro.Controllers
 
         }
 
-        [HttpPost("ReanudaCrono")]
+        [HttpPut("ReanudaCrono")]
         public ActionResult PauseStatus(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -108,17 +118,17 @@ namespace Cronomitro.Controllers
             }
             else
             {
-                if (_cronometros.ContainsKey(id))
+               double temps= _repo.Resume(id);
+                if(temps != -1)
                 {
-                    var crono = _cronometros.FirstOrDefault(x => x.Key == id).Value;
-                    crono.TempsInici = DateTime.Now;
-                    crono.Status = StatusCronometro.Started;
-                    return Ok(crono);
+                    return Ok(temps);
                 }
                 else
                 {
                     return NotFound("El id no existeix");
                 }
+
+
             }
         }
 
@@ -131,11 +141,10 @@ namespace Cronomitro.Controllers
             }
             else
             {
-                if (_cronometros.ContainsKey(id))
+             string status = _repo.Status(id);
+                if (status != null)
                 {
-                    var crono = _cronometros.FirstOrDefault(x => x.Key == id).Value;
-
-                    return Ok(crono.Status.ToString());
+                    return Ok(status);
                 }
                 else
                 {
