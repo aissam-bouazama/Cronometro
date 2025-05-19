@@ -30,6 +30,8 @@ namespace Cronomitro.Controllers
 
 
         }
+        
+
         [HttpGet("Crono")]
         public ActionResult Get(string id) {
             if (string.IsNullOrEmpty(id))
