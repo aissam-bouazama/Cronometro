@@ -40,7 +40,7 @@ namespace Cronometro.Data
             if (_cronometros.ContainsKey(id))
             {
                 var crono = _cronometros[id];
-                crono.TempsAcumulat = (DateTime.Now - crono.TempsInici).TotalSeconds;
+                crono.TempsAcumulat = (DateTime.Now - crono.TempsInici).TotalSeconds + crono.TempsAcumulat;
                 crono.Status = StatusCronometro.Paused;
 
                 return crono.TempsAcumulat;
@@ -71,6 +71,10 @@ namespace Cronometro.Data
         public string Start()
         {
             string id = Guid.NewGuid().ToString();
+    if(_cronometros == null)
+            {
+                _cronometros = new();
+            }
             if (_cronometros.ContainsKey(id))
             {
                 return string.Empty;
