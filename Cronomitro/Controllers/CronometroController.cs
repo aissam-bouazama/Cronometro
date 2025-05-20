@@ -10,16 +10,16 @@ namespace Cronomitro.Controllers
     [Route("[controller]")]
     public class CronometroController : Controller
     {
-        private readonly  RepositoryCronometros _repo = new RepositoryCronometros();
+        private readonly RepositoryCronometros _repo = new RepositoryCronometros();
 
 
-        
-      
+
+
         [HttpGet("LlistaCrono")]
         public ActionResult List()
         {
             var Cronos = _repo.Getall();
-            if ( Cronos== null)
+            if (Cronos == null)
             {
                 return NotFound("no hi ha Cap Llista");
             }
@@ -30,10 +30,11 @@ namespace Cronomitro.Controllers
 
 
         }
-        
+
 
         [HttpGet("Crono/{id}")]
-        public ActionResult Get(string id) {
+        public ActionResult Get(string id)
+        {
             if (string.IsNullOrEmpty(id))
             {
                 return BadRequest("El id no pot ser buit");
@@ -58,7 +59,7 @@ namespace Cronomitro.Controllers
 
             string id = _repo.Start();
 
-             if (id != null)
+            if (id != null)
             {
                 return Ok(id);
             }
@@ -76,7 +77,7 @@ namespace Cronomitro.Controllers
             }
             else
             {
-                 double temps = _repo.Stop(id);
+                double temps = _repo.Stop(id);
                 if (temps != -1)
                 {
                     return Ok(temps);
@@ -85,7 +86,7 @@ namespace Cronomitro.Controllers
                 {
                     return NotFound("El id no existeix");
                 }
-               
+
             }
         }
         [HttpPut("PausaCrono/{id}")]
@@ -97,7 +98,7 @@ namespace Cronomitro.Controllers
             }
             else
             {
-               double temps = _repo.Pause(id);
+                double temps = _repo.Pause(id);
                 if (temps != -1)
                 {
                     return Ok(temps);
@@ -120,8 +121,8 @@ namespace Cronomitro.Controllers
             }
             else
             {
-               double temps= _repo.Resume(id);
-                if(temps != -1)
+                double temps = _repo.Resume(id);
+                if (temps != -1)
                 {
                     return Ok(temps);
                 }
@@ -143,7 +144,7 @@ namespace Cronomitro.Controllers
             }
             else
             {
-             string status = _repo.Status(id);
+                string status = _repo.Status(id);
                 if (status != null)
                 {
                     return Ok(status);
