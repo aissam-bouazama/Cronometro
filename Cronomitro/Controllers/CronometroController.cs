@@ -14,7 +14,7 @@ namespace Cronomitro.Controllers
 
 
         
-
+      
         [HttpGet("LlistaCrono")]
         public ActionResult List()
         {
@@ -32,7 +32,7 @@ namespace Cronomitro.Controllers
         }
         
 
-        [HttpGet("Crono")]
+        [HttpGet("Crono/{id}")]
         public ActionResult Get(string id) {
             if (string.IsNullOrEmpty(id))
             {
@@ -67,7 +67,7 @@ namespace Cronomitro.Controllers
                 return BadRequest("No s'ha pogut afegir el crono");
             }
         }
-        [HttpDelete("AturaCrono")]
+        [HttpDelete("AturaCrono/{id}")]
         public ActionResult Stop(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -88,7 +88,7 @@ namespace Cronomitro.Controllers
                
             }
         }
-        [HttpPut("PausaCrono")]
+        [HttpPut("PausaCrono/{id}")]
         public ActionResult Pause(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -111,7 +111,7 @@ namespace Cronomitro.Controllers
 
         }
 
-        [HttpPut("ReanudaCrono")]
+        [HttpPut("ReanudaCrono/{id}")]
         public ActionResult PauseStatus(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -134,7 +134,7 @@ namespace Cronomitro.Controllers
             }
         }
 
-        [HttpPost("Estat")]
+        [HttpPost("Estat/{id}")]
         public ActionResult Status(string id)
         {
             if (string.IsNullOrEmpty(id))
